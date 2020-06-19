@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserDetailRepository extends JpaRepository<UserDetail, Integer> {
+public interface UserDetailRepository extends JpaRepository<UserDetail, Long> {
 
     @Query("select user from UserDetail user where user.status=true ")
     List<UserDetail> findAll();
+
+
 }

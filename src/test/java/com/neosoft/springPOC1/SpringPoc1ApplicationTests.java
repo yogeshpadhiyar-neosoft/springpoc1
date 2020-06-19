@@ -1,3 +1,4 @@
+/*
 package com.neosoft.springPOC1;
 
 import com.neosoft.springPOC1.controller.SpringPoc1MockitoTest;
@@ -17,3 +18,4 @@ class SpringPoc1ApplicationTests {
                 SpringPoc1Application.main(new String[] {});
         }
 }
+*/

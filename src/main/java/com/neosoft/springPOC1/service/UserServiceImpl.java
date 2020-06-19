@@ -1,50 +1,67 @@
 package com.neosoft.springPOC1.service;
 
-import com.neosoft.springPOC1.model.UserDetail;
-import com.neosoft.springPOC1.repository.UserDetailRepository;
+import com.neosoft.springPOC1.model.UserContracts;
+import com.neosoft.springPOC1.model.UserMaster;
+import com.neosoft.springPOC1.repository.UserMasterRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserDetailRepository userDetailRepository;
+    private final UserMasterRepo userMasterRepo;
 
     @Autowired
-    public UserServiceImpl(UserDetailRepository userDetailRepository) {
-        this.userDetailRepository = userDetailRepository;
+    public UserServiceImpl(UserMasterRepo userMasterRepo) {
+        this.userMasterRepo = userMasterRepo;
     }
 
     @Override
-    public UserDetail insert(UserDetail userDetail) {
-        return userDetailRepository.save(userDetail);
+    public UserMaster selectById(long id) {
+        return userMasterRepo.findById(id).orElse(null);
     }
 
     @Override
-    public UserDetail update(UserDetail userDetail) {
-        return userDetailRepository.save(userDetail);
+    public List<UserMaster> selectAll() {
+        return userMasterRepo.findAll();
     }
 
     @Override
-    public UserDetail selectById(int id) {
-        return userDetailRepository.findById(id).orElse(null);
+    public void delete(UserMaster userMaster) {
+        userMasterRepo.delete(userMaster);
     }
 
     @Override
-    public List<UserDetail> selectAll() {
-        return userDetailRepository.findAll();
+    public List<UserMaster> dynamicSort(String filed) {
+        return userMasterRepo.findAll(Sort.by(filed).ascending());
     }
 
     @Override
-    public void delete(UserDetail userDetail) {
-        userDetailRepository.delete(userDetail);
+    public UserMaster insertMaster(UserMaster userMaster) {
+        userMaster.getUserDetail().setUserMaster(userMaster);
+        userMaster.getUserEducation().setUserMaster(userMaster);
+        userMaster.getUserEmployeementDetails().setUserMaster(userMaster);
+        userMaster.getUserContracts().forEach(userContracts -> userContracts.setUserMaster(userMaster));
+        userMaster.getUserRole().setUserMaster(userMaster);
+        return userMasterRepo.save(userMaster);
     }
 
     @Override
-    public List<UserDetail> dynamicSort(String filed) {
-        return userDetailRepository.findAll(Sort.by(filed).ascending());
+    public UserMaster updateMaster(UserMaster userMaster , long id) {
+        List<UserContracts> userContracts = selectById(id).getUserContracts();
+        userMaster.setUserId(id);
+        userMaster.getUserDetail().setUserDetailId(id);
+        userMaster.getUserEducation().setUserEducationId(id);
+        userMaster.getUserEmployeementDetails().setUserEmployeeId(id);
+        userMaster.getUserRole().setRoleId(id);
+        for (int i = 0; i < userMaster.getUserContracts().size(); i++) {
+            userMaster.getUserContracts().get(i).setProjectId(userContracts.get(i).getProjectId());
+        }
+        return userMasterRepo.save(userMaster);
     }
+
 }
