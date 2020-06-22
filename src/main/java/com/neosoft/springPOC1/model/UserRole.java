@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -20,7 +21,11 @@ public class UserRole {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long roleId;
+
+    @NotNull
     private String role;
+
+    @NotNull
     private int roleExperience;
 
 }

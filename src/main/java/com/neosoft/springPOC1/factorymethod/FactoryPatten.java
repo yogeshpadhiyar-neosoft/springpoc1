@@ -93,16 +93,4 @@ public class FactoryPatten {
         return query.toString();
     }
 
-    /*public static List<String> userStringList(UserDetail userDetail){
-        List<String> stringList = new ArrayList<>();
-        stringList.add(String.valueOf(userDetail.getUserDetailId()));
-        stringList.add(userDetail.getName());
-        stringList.add(userDetail.getSurName());
-        stringList.add(userDetail.getEmailId());
-        stringList.add(String.valueOf(userDetail.getMobileNo()));
-        stringList.add(String.valueOf(userDetail.getDOB()));
-        stringList.add(String.valueOf(userDetail.getJoinDate()));
-        stringList.add(String.valueOf(userDetail.getPinCode()));
-        return stringList;
-    }*/
 }

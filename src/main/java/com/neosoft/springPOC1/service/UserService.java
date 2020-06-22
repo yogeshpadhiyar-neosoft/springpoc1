@@ -1,8 +1,6 @@
 package com.neosoft.springPOC1.service;
 
-import com.neosoft.springPOC1.model.UserDetail;
 import com.neosoft.springPOC1.model.UserMaster;
-import com.neosoft.springPOC1.model.UserWrapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

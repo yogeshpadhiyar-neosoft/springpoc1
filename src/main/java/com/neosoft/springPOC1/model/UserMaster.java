@@ -1,13 +1,16 @@
 package com.neosoft.springPOC1.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.util.List;
@@ -22,13 +25,21 @@ public class UserMaster {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
 
+    @NotNull
     @Pattern(regexp = "^[a-zA-Z0-9]{5,15}$",message = "Enter valid size userName")
     private String userName;
-//    @Pattern(regexp = "^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$%^&*-]).{8,}$",message = "invalid password")
+
+    @NotNull
+    @Pattern(regexp = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[&@#$%]).{8,20})", message = "invalid password")
     private String password;
+
     private Boolean active=true;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createDate;
-    private Date UpdatedDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date updatedDate;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JsonManagedReference

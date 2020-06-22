@@ -1,8 +1,7 @@
 package com.neosoft.springPOC1.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -25,26 +25,38 @@ public class UserEducation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userEducationId;
+
+    @NotNull
     private String sscBoardName;
+
+    @NotNull
     private String hscBoardName;
+
+    @NotNull
     private String universityName;
 
+    @NotNull
     @Digits(integer = 2,fraction = 2)
     private float sscPercentage;
 
+    @NotNull
     @Digits(integer = 2,fraction = 2)
     private float hscPercentage;
 
+    @NotNull
     @Digits(integer = 2,fraction = 2)
     private float universityPercentage;
 
-    @Digits(integer = 4, fraction = 0)
+    @NotNull
+    @JsonFormat(pattern = "yyyy")
     private int sscPassingYear;
 
-    @Digits(integer = 4, fraction = 0)
+    @NotNull
+    @JsonFormat(pattern = "yyyy")
     private int hscPassingYear;
 
-    @Digits(integer = 4, fraction = 0)
+    @NotNull
+    @JsonFormat(pattern = "yyyy")
     private int uniPassingYear;
 
 }
