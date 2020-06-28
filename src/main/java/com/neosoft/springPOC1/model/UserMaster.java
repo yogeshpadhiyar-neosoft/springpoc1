@@ -2,13 +2,12 @@ package com.neosoft.springPOC1.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.OptBoolean;
+import com.neosoft.springPOC1.Constant.Regex;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -26,19 +25,19 @@ public class UserMaster {
     private long userId;
 
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9]{5,15}$",message = "Enter valid size userName")
+    @Pattern(regexp = Regex.USERNAME,message = "Enter valid size userName")
     private String userName;
 
     @NotNull
-    @Pattern(regexp = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[&@#$%]).{8,20})", message = "invalid password")
+    @Pattern(regexp = Regex.PASSWORD, message = "invalid password")
     private String password;
 
     private Boolean active=true;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",lenient = OptBoolean.FALSE)
     private Date createDate;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",lenient = OptBoolean.FALSE)
     private Date updatedDate;
 
     @OneToOne(cascade = CascadeType.ALL)

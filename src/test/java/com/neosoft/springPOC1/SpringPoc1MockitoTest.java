@@ -3,7 +3,6 @@ package com.neosoft.springPOC1;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neosoft.springPOC1.controller.UserController;
-import com.neosoft.springPOC1.exception.UserException;
 import com.neosoft.springPOC1.model.*;
 import com.neosoft.springPOC1.service.DynamicSearchCustomImpl;
 import com.neosoft.springPOC1.service.UserServiceImpl;

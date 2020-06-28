@@ -1,30 +1,31 @@
 package com.neosoft.springPOC1.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neosoft.springPOC1.Constant.ErrorMessages;
-import com.neosoft.springPOC1.exception.UserException;
+import com.neosoft.springPOC1.exception.CustomMessage;
 import com.neosoft.springPOC1.factorymethod.FactoryPatten;
-import com.neosoft.springPOC1.model.*;
+import com.neosoft.springPOC1.model.UserMaster;
+import com.neosoft.springPOC1.requestpojo.UserMasterReqPojo;
 import com.neosoft.springPOC1.service.DynamicSearchCustomImpl;
+import com.neosoft.springPOC1.service.UserDetailService;
 import com.neosoft.springPOC1.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/poc1/userDetail")
-public class UserController {
+public class UserController extends ValidationController{
 
     private final UserServiceImpl userServiceImpl;
     private final DynamicSearchCustomImpl dynamicSearch;
 
+
     @Autowired
-    public UserController(UserServiceImpl userServiceImpl , DynamicSearchCustomImpl dynamicSearch) {
+    public UserController(UserServiceImpl userServiceImpl, DynamicSearchCustomImpl dynamicSearch, UserDetailService userDetailService) {
+        super(userDetailService);
         this.userServiceImpl = userServiceImpl;
         this.dynamicSearch = dynamicSearch;
     }
@@ -33,75 +34,105 @@ public class UserController {
      * User for all user database
      * No need any input for display all user data
      * DashBoard
+     *
      * @return
      */
     @GetMapping("/")
-    public List<UserMaster> allUser(){
-        List<UserMaster> userMasterList = userServiceImpl.selectAll();
-            if(userMasterList.isEmpty())
-                throw new UserException(ErrorMessages.ANY_USER_NOT_FOUND);
-            else
-                return userMasterList;
-
+    public ResponseEntity<Object> allUser() {
+        ResponseEntity<Object> responseEntity;
+        try {
+            responseEntity = responseBuilder(userServiceImpl.selectAll());
+        } catch (CustomMessage e) {
+            e.setErrorMessage(ErrorMessages.ANY_USER_NOT_FOUND);
+            responseEntity = responseEx(e);
+        }
+        return responseEntity;
     }
 
 
     /**
      * New Registration of User
      * Insert new user need to all table data.
-     * @param userMaster
+     *
+     * @param userMasterReqPojo
      * @return inserted data
      */
     @PostMapping(value = "/add", consumes = "application/json")
-    public UserMaster insertUser(@Valid @RequestBody UserMaster userMaster) {
-        return userServiceImpl.insertMaster(userMaster);
+    public ResponseEntity<Object> insertUser(@Valid @RequestBody UserMasterReqPojo userMasterReqPojo) throws CustomMessage {
+        ResponseEntity<Object> responseEntity = null;
+        try {
+            if (valid(userMasterReqPojo)) {
+                UserMaster userMaster = FactoryPatten.userRequest(userMasterReqPojo);
+                responseEntity = responseBuilder(userServiceImpl.insertMaster(userMaster));
+            }
+        } catch (CustomMessage e) {
+            responseEntity = responseEx(e);
+        }
+        return responseEntity;
     }
 
 
     /**
      * use for update user details
+     *
      * @param id
-     * @param userMaster
      * @return updated data
      */
     @PutMapping("/{userId}")
-    public UserMaster updateUser(@PathVariable("userId") long id, @RequestBody UserMaster userMaster) {
-        if(userServiceImpl.selectById(id)==null){
-            throw new UserException(ErrorMessages.NO_USER_FOUND);
+    public ResponseEntity<Object> updateUser(@PathVariable("userId") long id,  @RequestBody UserMasterReqPojo userMasterReqPojo) {
+        ResponseEntity<Object> responseEntity;
+        try {
+            UserMaster userMaster =FactoryPatten.userRequest(userMasterReqPojo);
+            responseEntity = responseBuilder(userServiceImpl.updateMaster(userMaster, id));
+
+        } catch (CustomMessage e) {
+
+            responseEntity = responseEx(e);
         }
-        return userServiceImpl.updateMaster(userMaster,id);
+        return responseEntity;
     }
 
 
     /**
      * soft delete mean only set user in active
      * status false
+     *
      * @param id
      * @param userMaster
      */
     @DeleteMapping("/softDelete/{userId}")
-    public void softDelete(@PathVariable("userId") long id, @ModelAttribute UserMaster userMaster) {
-        userMaster = userServiceImpl.selectById(id);
-        if(userMaster==null){
-            throw new UserException(ErrorMessages.NO_USER_FOUND);
+    public ResponseEntity<Object> softDelete(@PathVariable("userId") long id, @ModelAttribute UserMaster userMaster) {
+        ResponseEntity<Object> responseEntity;
+        try {
+            userMaster = userServiceImpl.selectById(id);
+            userMaster.setActive(false);
+            userMaster.getUserDetail().setStatus(false);
+            userServiceImpl.updateMaster(userMaster, id);
+
+            responseEntity = responseMessage("User ID : '" + id + "' successfully soft delete");
+        } catch (CustomMessage e) {
+            responseEntity = responseEx(e);
         }
-        userMaster.setActive(false);
-        userMaster.getUserDetail().setStatus(false);
-        userServiceImpl.updateMaster(userMaster,id);
+        return responseEntity;
     }
 
     /**
      * hard delete means also delete from database
+     *
      * @param id
      * @param userMaster
      */
     @DeleteMapping("/hardDelete/{userId}")
-    public void hardDelete(@PathVariable("userId") long id, @ModelAttribute UserMaster userMaster) {
-        userMaster = userServiceImpl.selectById(id);
-        if(userMaster==null){
-            throw new UserException(ErrorMessages.NO_USER_FOUND);
+    public ResponseEntity<Object> hardDelete(@PathVariable("userId") long id, @ModelAttribute UserMaster userMaster) {
+        ResponseEntity<Object> responseEntity;
+        try {
+            userMaster = userServiceImpl.selectById(id);
+            userServiceImpl.delete(userMaster);
+            responseEntity = responseMessage("User ID : '" + id + "' successfully hard delete");
+        } catch (CustomMessage e) {
+            responseEntity = responseEx(e);
         }
-        userServiceImpl.delete(userMaster);
+        return responseEntity;
     }
 
 
@@ -109,26 +140,39 @@ public class UserController {
      * this method is use for dynamic search
      * need to insert parameter and values
      * like "fieldName1=value1&fieldName2=value2"
+     *
      * @param query
      * @return searched user list
      */
     @GetMapping("/{query}")
-    public List<UserMaster> dynamicSearch(@PathVariable("query") String query) {
-        query= FactoryPatten.queryConstructor(query);
-        System.out.println(query);
-        return dynamicSearch.dynamicSearch(query);
+    public ResponseEntity<Object> dynamicSearch (@PathVariable("query") String query){
+        ResponseEntity<Object> responseEntity;
+        try {
+            query = FactoryPatten.selectQueryConstructor(query);
+            responseEntity = responseBuilder(dynamicSearch.dynamicSearch(query));
+        }catch (CustomMessage e){
+            responseEntity = responseEx(e);
+        }
+        return responseEntity;
     }
 
 
     /**
      * Method is use for dynamic sorting with anny of filed in database
      * URL passing like "ModelName.filedName"
+     *
      * @param field
      * @return
      */
     @GetMapping("/sortBy{field}")
-    public List<UserMaster> sortBy(@PathVariable("field") String field) {
-        return userServiceImpl.dynamicSort(field);
+    public ResponseEntity<Object> sortBy (@PathVariable("field") String field){
+        ResponseEntity<Object> responseEntity;
+        try{
+            responseEntity = responseBuilder(userServiceImpl.dynamicSort(field));
+        }catch (CustomMessage e){
+            responseEntity = responseEx(e);
+        }
+        return responseEntity;
     }
 
 

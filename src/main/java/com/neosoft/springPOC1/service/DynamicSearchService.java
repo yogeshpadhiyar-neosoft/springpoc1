@@ -15,4 +15,5 @@ public interface DynamicSearchService {
      * @return List<UserMaster>
      */
     List<UserMaster> dynamicSearch(String query);
+
 }

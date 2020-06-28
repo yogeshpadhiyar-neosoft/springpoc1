@@ -1,6 +1,9 @@
 package com.neosoft.springPOC1.service;
 
+import com.neosoft.springPOC1.Constant.ErrorMessages;
+import com.neosoft.springPOC1.exception.CustomMessage;
 import com.neosoft.springPOC1.model.UserMaster;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -18,13 +21,19 @@ public class DynamicSearchCustomImpl implements DynamicSearchService {
     private EntityManager entityManager;
 
     @Override
-    public List<UserMaster> dynamicSearch(String query){
+    public List<UserMaster> dynamicSearch(String query) throws CustomMessage{
+        if(query==null)
+            throw new CustomMessage(HttpStatus.BAD_REQUEST,ErrorMessages.WRONG_QUERY);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-
         CriteriaQuery<UserMaster> criteriaQuery = criteriaBuilder.createQuery(UserMaster.class);
         Root<UserMaster> userMaster = criteriaQuery.from(UserMaster.class);
         criteriaQuery.select(userMaster);
         TypedQuery<UserMaster> queryResult = entityManager.createQuery(query,UserMaster.class);
-        return queryResult.getResultList();
+
+        if(queryResult.getResultList().isEmpty())
+            throw new CustomMessage(HttpStatus.BAD_REQUEST, ErrorMessages.WRONG_QUERY);
+        else
+            return queryResult.getResultList();
     }
+
 }

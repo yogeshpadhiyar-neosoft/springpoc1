@@ -14,4 +14,5 @@ public interface UserDetailRepository extends JpaRepository<UserDetail, Long> {
     List<UserDetail> findAll();
 
 
+    boolean existsUserDetailByEmailId(String emailId);
 }

@@ -1,10 +1,13 @@
 package com.neosoft.springPOC1.service;
 
+import com.neosoft.springPOC1.Constant.ErrorMessages;
+import com.neosoft.springPOC1.exception.CustomMessage;
 import com.neosoft.springPOC1.model.UserContracts;
 import com.neosoft.springPOC1.model.UserMaster;
 import com.neosoft.springPOC1.repository.UserMasterRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,37 +24,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserMaster selectById(long id) {
-        return userMasterRepo.findById(id).orElse(null);
+    public List<UserMaster> selectAll() throws CustomMessage{
+        List<UserMaster> userMasterList =userMasterRepo.findAll();
+        if(userMasterList.isEmpty())
+            throw new CustomMessage(HttpStatus.BAD_REQUEST, ErrorMessages.ANY_USER_NOT_FOUND);
+        return userMasterList;
     }
 
     @Override
-    public List<UserMaster> selectAll() {
-        return userMasterRepo.findAll();
+    public UserMaster insertMaster(UserMaster userMaster) throws CustomMessage{
+            return userMasterRepo.save(userMaster);
+
+    }
+
+    @Override
+    public UserMaster selectById(long id)  throws CustomMessage{
+        return userMasterRepo.findById(id).orElseThrow(()->new CustomMessage(HttpStatus.NO_CONTENT,ErrorMessages.NO_USER_FOUND));
     }
 
     @Override
     public void delete(UserMaster userMaster) {
-        userMasterRepo.delete(userMaster);
+        userMasterRepo.deleteById(userMaster.getUserId());
     }
 
     @Override
-    public List<UserMaster> dynamicSort(String filed) {
-        return userMasterRepo.findAll(Sort.by(filed).ascending());
+    public List<UserMaster> dynamicSort(String filed) throws CustomMessage {
+        List<UserMaster> userMasterList = userMasterRepo.findAll(Sort.by(filed).ascending());
+        if(userMasterList.isEmpty())
+            throw new CustomMessage(HttpStatus.NO_CONTENT,ErrorMessages.ANY_USER_NOT_FOUND);
+        else
+            return userMasterRepo.findAll(Sort.by(filed).ascending());
     }
 
     @Override
-    public UserMaster insertMaster(UserMaster userMaster) {
-        userMaster.getUserDetail().setUserMaster(userMaster);
-        userMaster.getUserEducation().setUserMaster(userMaster);
-        userMaster.getUserEmployeementDetails().setUserMaster(userMaster);
-        userMaster.getUserContracts().forEach(userContracts -> userContracts.setUserMaster(userMaster));
-        userMaster.getUserRole().setUserMaster(userMaster);
-        return userMasterRepo.save(userMaster);
-    }
-
-    @Override
-    public UserMaster updateMaster(UserMaster userMaster , long id) {
+    public UserMaster updateMaster(UserMaster userMaster , long id) throws CustomMessage{
+        if(selectById(id)==null)
+            throw new CustomMessage(HttpStatus.NO_CONTENT,ErrorMessages.NO_USER_FOUND);
         List<UserContracts> userContracts = selectById(id).getUserContracts();
         userMaster.setUserId(id);
         userMaster.getUserDetail().setUserDetailId(id);

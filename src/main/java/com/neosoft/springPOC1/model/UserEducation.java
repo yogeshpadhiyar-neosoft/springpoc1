@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -37,14 +38,18 @@ public class UserEducation {
 
     @NotNull
     @Digits(integer = 2,fraction = 2)
+    @Max(value = 100 , message = "Percentage Not more then 100")
     private float sscPercentage;
 
     @NotNull
     @Digits(integer = 2,fraction = 2)
+    @Max(value = 100 , message = "Percentage Not more then 100")
+
     private float hscPercentage;
 
     @NotNull
     @Digits(integer = 2,fraction = 2)
+    @Max(value = 100 , message = "Percentage Not more then 100")
     private float universityPercentage;
 
     @NotNull
