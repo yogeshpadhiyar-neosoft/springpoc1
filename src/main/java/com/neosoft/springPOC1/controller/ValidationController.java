@@ -76,11 +76,11 @@ public abstract class ValidationController {
             errors.add("Work Mobile Number not valid");
         }
         userMasterReqPojo.getUserContractsReqPojoList().forEach(userContracts ->
-            {
-                if(!startDateAndEndDateValidator(userContracts.getStartDate(),userContracts.getEndDate())){
-                    errors.add("Project name : '"+userContracts.getProjectName()+"' startDate and EndDate Not valid");
-                }
-            });
+        {
+            if(!startDateAndEndDateValidator(userContracts.getStartDate(),userContracts.getEndDate())){
+                errors.add("Project name : '"+userContracts.getProjectName()+"' startDate and EndDate Not valid");
+            }
+        });
 
         if(errors.isEmpty()){
             return true;
@@ -163,9 +163,9 @@ public abstract class ValidationController {
      */
     protected ResponseEntity<Object> responseBuilder(List<UserMaster> userMasterList ) throws CustomMessage{
         List<UserMasterPojo> userMasterPojoList = new ArrayList<>();
-                userMasterList.forEach(userMaster -> {
-                    userMasterPojoList.add(FactoryPatten.userResponse(userMaster));
-                });
+        userMasterList.forEach(userMaster -> {
+            userMasterPojoList.add(FactoryPatten.userResponse(userMaster));
+        });
         return new ResponseEntity<>(userMasterPojoList , HttpStatus.ACCEPTED);
     }
 
