@@ -116,17 +116,17 @@ public class FactoryPatten {
                 ,userMaster.getUserEducation().getUniversityPercentage(),userMaster.getUserEducation().getSscPassingYear(),userMaster.getUserEducation().getHscPassingYear()
                 ,userMaster.getUserEducation().getUniPassingYear());
 
-        UserEmployeementDetailsPojo userEmployeementDetailsPojo = new UserEmployeementDetailsPojo(userMaster.getUserEmployeementDetails().getDepartment(),userMaster.getUserEmployeementDetails().getWorkMobileNo(),
+        UserEmployeementDetailsPojo userEmployeementDetailsPojo = new UserEmployeementDetailsPojo(userMaster.getUserEmployeementDetails().getDepartment(),userMaster.getUserEmployeementDetails().getWorkEmailId(),
                 userMaster.getUserEmployeementDetails().getWorkMobileNo(),userMaster.getUserEmployeementDetails().getSalary(),userMaster.getUserEmployeementDetails().getEmployeeJoinDate(),userMaster.getUserEmployeementDetails().getExperience());
 
         List<UserContractsPojo> userContractsPojoList = new ArrayList<UserContractsPojo>();
         userMaster.getUserContracts().forEach(project->{
-            userContractsPojoList.add(new UserContractsPojo(project.getProjectName(),project.getProjectDetails(),project.getStartDate(),project.getEndDate(),project.isActiveProject()));
+            userContractsPojoList.add(new UserContractsPojo(project.getProjectName(),project.getProjectDetails(),project.getCompanyName(),project.getStartDate(),project.getEndDate(),project.isActiveProject()));
         });
 
         UserRolePojo userRolePojo = new UserRolePojo(userMaster.getUserRole().getRole(),userMaster.getUserRole().getRoleExperience());
 
-        return new UserMasterPojo(userMaster.getUserName(),userDetailsPojo,userEducationPojo,userEmployeementDetailsPojo,userContractsPojoList,userRolePojo);
+        return new UserMasterPojo(userMaster.getUserId(),userMaster.getUserName(),userDetailsPojo,userEducationPojo,userEmployeementDetailsPojo,userContractsPojoList,userRolePojo);
 
     }
 
@@ -140,38 +140,38 @@ public class FactoryPatten {
     public static UserMaster userRequest(UserMasterReqPojo userMasterReqPojo){
 
         UserDetail userDetail = new UserDetail();
-        userDetail.setName(userMasterReqPojo.getUserDetailReqPojo().getName());
-        userDetail.setSurName(userMasterReqPojo.getUserDetailReqPojo().getSurName());
-        userDetail.setEmailId(userMasterReqPojo.getUserDetailReqPojo().getEmailId());
-        userDetail.setMobileNo(userMasterReqPojo.getUserDetailReqPojo().getMobileNo());
-        userDetail.setDateOfBirth(userMasterReqPojo.getUserDetailReqPojo().getDateOfBirth());
-        userDetail.setJoinDate(userMasterReqPojo.getUserDetailReqPojo().getJoinDate());
-        userDetail.setPinCode(userMasterReqPojo.getUserDetailReqPojo().getPinCode());
+        userDetail.setName(userMasterReqPojo.getUserDetailsPojo().getName());
+        userDetail.setSurName(userMasterReqPojo.getUserDetailsPojo().getSurName());
+        userDetail.setEmailId(userMasterReqPojo.getUserDetailsPojo().getEmailId());
+        userDetail.setMobileNo(userMasterReqPojo.getUserDetailsPojo().getMobileNo());
+        userDetail.setDateOfBirth(userMasterReqPojo.getUserDetailsPojo().getDateOfBirth());
+        userDetail.setJoinDate(userMasterReqPojo.getUserDetailsPojo().getJoinDate());
+        userDetail.setPinCode(userMasterReqPojo.getUserDetailsPojo().getPinCode());
         userDetail.setStatus(true);
 
         UserEducation userEducation = new UserEducation();
-        userEducation.setSscBoardName(userMasterReqPojo.getUserEducationReqPojo().getSscBoardName());
-        userEducation.setHscBoardName(userMasterReqPojo.getUserEducationReqPojo().getHscBoardName());
-        userEducation.setUniversityName(userMasterReqPojo.getUserEducationReqPojo().getUniversityName());
-        userEducation.setSscPercentage(userMasterReqPojo.getUserEducationReqPojo().getSscPercentage());
-        userEducation.setHscPercentage(userMasterReqPojo.getUserEducationReqPojo().getHscPercentage());
-        userEducation.setUniversityPercentage(userMasterReqPojo.getUserEducationReqPojo().getUniversityPercentage());
-        userEducation.setSscPassingYear(userMasterReqPojo.getUserEducationReqPojo().getSscPassingYear());
-        userEducation.setHscPassingYear(userMasterReqPojo.getUserEducationReqPojo().getHscPassingYear());
-        userEducation.setUniPassingYear(userMasterReqPojo.getUserEducationReqPojo().getUniPassingYear());
+        userEducation.setSscBoardName(userMasterReqPojo.getUserEducationPojo().getSscBoardName());
+        userEducation.setHscBoardName(userMasterReqPojo.getUserEducationPojo().getHscBoardName());
+        userEducation.setUniversityName(userMasterReqPojo.getUserEducationPojo().getUniversityName());
+        userEducation.setSscPercentage(userMasterReqPojo.getUserEducationPojo().getSscPercentage());
+        userEducation.setHscPercentage(userMasterReqPojo.getUserEducationPojo().getHscPercentage());
+        userEducation.setUniversityPercentage(userMasterReqPojo.getUserEducationPojo().getUniversityPercentage());
+        userEducation.setSscPassingYear(userMasterReqPojo.getUserEducationPojo().getSscPassingYear());
+        userEducation.setHscPassingYear(userMasterReqPojo.getUserEducationPojo().getHscPassingYear());
+        userEducation.setUniPassingYear(userMasterReqPojo.getUserEducationPojo().getUniPassingYear());
 
 
         UserEmployeementDetails userEmployeementDetails = new UserEmployeementDetails();
-        userEmployeementDetails.setDepartment(userMasterReqPojo.getUserEmployeementDetailsReqPojo().getDepartment());
-        userEmployeementDetails.setWorkMobileNo(userMasterReqPojo.getUserEmployeementDetailsReqPojo().getWorkMobileNo());
-        userEmployeementDetails.setWorkEmailId(userMasterReqPojo.getUserEmployeementDetailsReqPojo().getWorkEmailId());
-        userEmployeementDetails.setSalary(userMasterReqPojo.getUserEmployeementDetailsReqPojo().getSalary());
-        userEmployeementDetails.setEmployeeJoinDate(userMasterReqPojo.getUserEmployeementDetailsReqPojo().getEmployeeJoinDate());
-        userEmployeementDetails.setExperience(userMasterReqPojo.getUserEmployeementDetailsReqPojo().getExperience());
+        userEmployeementDetails.setDepartment(userMasterReqPojo.getUserEmployeementDetailsPojo().getDepartment());
+        userEmployeementDetails.setWorkMobileNo(userMasterReqPojo.getUserEmployeementDetailsPojo().getWorkMobileNo());
+        userEmployeementDetails.setWorkEmailId(userMasterReqPojo.getUserEmployeementDetailsPojo().getWorkEmailId());
+        userEmployeementDetails.setSalary(userMasterReqPojo.getUserEmployeementDetailsPojo().getSalary());
+        userEmployeementDetails.setEmployeeJoinDate(userMasterReqPojo.getUserEmployeementDetailsPojo().getEmployeeJoinDate());
+        userEmployeementDetails.setExperience(userMasterReqPojo.getUserEmployeementDetailsPojo().getExperience());
 
 
         List<UserContracts> userContractsList = new ArrayList<>();
-        for (UserContractsReqPojo project : userMasterReqPojo.getUserContractsReqPojoList()) {
+        for (UserContractsReqPojo project : userMasterReqPojo.getUserContractsPojoList()) {
             UserContracts userContracts = new UserContracts();
             userContracts.setProjectName(project.getProjectName());
             userContracts.setProjectDetails(project.getProjectDetails());
@@ -183,8 +183,8 @@ public class FactoryPatten {
         }
 
         UserRole userRole = new UserRole();
-        userRole.setRole(userMasterReqPojo.getUserRoleReqPojo().getRole());
-        userRole.setRoleExperience(userMasterReqPojo.getUserRoleReqPojo().getRoleExperience());
+        userRole.setRole(userMasterReqPojo.getUserRolePojo().getRole());
+        userRole.setRoleExperience(userMasterReqPojo.getUserRolePojo().getRoleExperience());
 
         UserMaster userMaster = new UserMaster();
         userMaster.setUserName(userMasterReqPojo.getUserName());

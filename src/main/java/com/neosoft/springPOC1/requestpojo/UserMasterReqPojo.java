@@ -16,9 +16,9 @@ public class UserMasterReqPojo {
     private String userName;
     private String password;
 
-    private UserDetailReqPojo userDetailReqPojo;
-    private UserEducationReqPojo userEducationReqPojo;
-    private UserEmployeementDetailsReqPojo userEmployeementDetailsReqPojo;
-    private List<UserContractsReqPojo> userContractsReqPojoList;
-    private UserRoleReqPojo userRoleReqPojo;
+    private UserDetailReqPojo userDetailsPojo;
+    private UserEducationReqPojo userEducationPojo;
+    private UserEmployeementDetailsReqPojo userEmployeementDetailsPojo;
+    private List<UserContractsReqPojo> userContractsPojoList;
+    private UserRoleReqPojo userRolePojo;
 }

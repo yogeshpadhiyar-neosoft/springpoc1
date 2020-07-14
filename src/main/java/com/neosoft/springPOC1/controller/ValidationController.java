@@ -42,40 +42,40 @@ public abstract class ValidationController {
         if(!passwordValidator(userMasterReqPojo.getPassword())){
             errors.add("Password Not Valid");
         }
-        if(!emailIdValidator(userMasterReqPojo.getUserDetailReqPojo().getEmailId())){
+        if(!emailIdValidator(userMasterReqPojo.getUserDetailsPojo().getEmailId())){
             errors.add("Please Enter Valid EmailId.");
         }
-        if(!mobileNoValidator(userMasterReqPojo.getUserDetailReqPojo().getMobileNo())){
+        if(!mobileNoValidator(userMasterReqPojo.getUserDetailsPojo().getMobileNo())){
             errors.add("Mobile Number Not Valid");
         }
-        if(!pinCodeValidator(userMasterReqPojo.getUserDetailReqPojo().getPinCode())){
+        if(!pinCodeValidator(userMasterReqPojo.getUserDetailsPojo().getPinCode())){
             errors.add("PinCode Not Valid");
         }
-        if(!percentageValidator(userMasterReqPojo.getUserEducationReqPojo().getSscPercentage())){
+        if(!percentageValidator(userMasterReqPojo.getUserEducationPojo().getSscPercentage())){
             errors.add("S.S.C percentage Not Valid");
         }
-        if(!percentageValidator(userMasterReqPojo.getUserEducationReqPojo().getHscPercentage())){
+        if(!percentageValidator(userMasterReqPojo.getUserEducationPojo().getHscPercentage())){
             errors.add("H.S.C percentage Not Valid");
         }
-        if(!percentageValidator(userMasterReqPojo.getUserEducationReqPojo().getUniversityPercentage())){
+        if(!percentageValidator(userMasterReqPojo.getUserEducationPojo().getUniversityPercentage())){
             errors.add("University percentage Not Valid");
         }
-        if(!yearValidator(userMasterReqPojo.getUserEducationReqPojo().getSscPassingYear())){
+        if(!yearValidator(userMasterReqPojo.getUserEducationPojo().getSscPassingYear())){
             errors.add("S.S.C passing Not Valid");
         }
-        if(!yearValidator(userMasterReqPojo.getUserEducationReqPojo().getHscPassingYear())){
+        if(!yearValidator(userMasterReqPojo.getUserEducationPojo().getHscPassingYear())){
             errors.add("H.S.C passing Not Valid");
         }
-        if(!yearValidator(userMasterReqPojo.getUserEducationReqPojo().getUniPassingYear())){
+        if(!yearValidator(userMasterReqPojo.getUserEducationPojo().getUniPassingYear())){
             errors.add("University passing Not Valid");
         }
-        if(!workEmailIdValidator(userMasterReqPojo.getUserEmployeementDetailsReqPojo().getWorkEmailId())){
+        if(!workEmailIdValidator(userMasterReqPojo.getUserEmployeementDetailsPojo().getWorkEmailId())){
             errors.add("Work Email Id not valid");
         }
-        if(!mobileNoValidator(userMasterReqPojo.getUserEmployeementDetailsReqPojo().getWorkMobileNo())){
+        if(!mobileNoValidator(userMasterReqPojo.getUserEmployeementDetailsPojo().getWorkMobileNo())){
             errors.add("Work Mobile Number not valid");
         }
-        userMasterReqPojo.getUserContractsReqPojoList().forEach(userContracts ->
+        userMasterReqPojo.getUserContractsPojoList().forEach(userContracts ->
         {
             if(!startDateAndEndDateValidator(userContracts.getStartDate(),userContracts.getEndDate())){
                 errors.add("Project name : '"+userContracts.getProjectName()+"' startDate and EndDate Not valid");

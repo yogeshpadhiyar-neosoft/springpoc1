@@ -1,6 +1,6 @@
 package com.neosoft.springPOC1.service;
 
-import com.neosoft.springPOC1.Constant.ErrorMessages;
+import com.neosoft.springPOC1.Constant.AppMessages;
 import com.neosoft.springPOC1.exception.CustomMessage;
 import com.neosoft.springPOC1.model.UserContracts;
 import com.neosoft.springPOC1.model.UserMaster;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public List<UserMaster> selectAll() throws CustomMessage{
         List<UserMaster> userMasterList =userMasterRepo.findAll();
         if(userMasterList.isEmpty())
-            throw new CustomMessage(HttpStatus.BAD_REQUEST, ErrorMessages.ANY_USER_NOT_FOUND);
+            throw new CustomMessage(HttpStatus.BAD_REQUEST, AppMessages.ANY_USER_NOT_FOUND);
         return userMasterList;
     }
 
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserMaster selectById(long id)  throws CustomMessage{
-        return userMasterRepo.findById(id).orElseThrow(()->new CustomMessage(HttpStatus.NO_CONTENT,ErrorMessages.NO_USER_FOUND));
+        return userMasterRepo.findById(id).orElseThrow(()->new CustomMessage(HttpStatus.NO_CONTENT, AppMessages.NO_USER_FOUND));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public List<UserMaster> dynamicSort(String filed) throws CustomMessage {
         List<UserMaster> userMasterList = userMasterRepo.findAll(Sort.by(filed).ascending());
         if(userMasterList.isEmpty())
-            throw new CustomMessage(HttpStatus.NO_CONTENT,ErrorMessages.ANY_USER_NOT_FOUND);
+            throw new CustomMessage(HttpStatus.NO_CONTENT, AppMessages.ANY_USER_NOT_FOUND);
         else
             return userMasterRepo.findAll(Sort.by(filed).ascending());
     }
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserMaster updateMaster(UserMaster userMaster , long id) throws CustomMessage{
         if(selectById(id)==null)
-            throw new CustomMessage(HttpStatus.NO_CONTENT,ErrorMessages.NO_USER_FOUND);
+            throw new CustomMessage(HttpStatus.NO_CONTENT, AppMessages.NO_USER_FOUND);
         List<UserContracts> userContracts = selectById(id).getUserContracts();
         userMaster.setUserId(id);
         userMaster.getUserDetail().setUserDetailId(id);

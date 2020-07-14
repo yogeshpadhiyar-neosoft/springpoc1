@@ -1,10 +1,11 @@
 package com.neosoft.springPOC1.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.neosoft.springPOC1.Constant.ErrorMessages;
+import com.neosoft.springPOC1.Constant.AppMessages;
 import com.neosoft.springPOC1.exception.CustomMessage;
 import com.neosoft.springPOC1.factorymethod.FactoryPatten;
 import com.neosoft.springPOC1.model.UserMaster;
+import com.neosoft.springPOC1.requestpojo.ChangePassword;
 import com.neosoft.springPOC1.requestpojo.UserMasterReqPojo;
 import com.neosoft.springPOC1.service.DynamicSearchCustomImpl;
 import com.neosoft.springPOC1.service.UserDetailService;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/poc1/userDetail")
+@CrossOrigin(origins = "*" , allowedHeaders = "*")
 public class UserController extends ValidationController{
 
     private final UserServiceImpl userServiceImpl;
@@ -24,7 +26,8 @@ public class UserController extends ValidationController{
 
 
     @Autowired
-    public UserController(UserServiceImpl userServiceImpl, DynamicSearchCustomImpl dynamicSearch, UserDetailService userDetailService) {
+    public UserController(UserServiceImpl userServiceImpl, DynamicSearchCustomImpl dynamicSearch,
+                          UserDetailService userDetailService) {
         super(userDetailService);
         this.userServiceImpl = userServiceImpl;
         this.dynamicSearch = dynamicSearch;
@@ -43,7 +46,7 @@ public class UserController extends ValidationController{
         try {
             responseEntity = responseBuilder(userServiceImpl.selectAll());
         } catch (CustomMessage e) {
-            e.setErrorMessage(ErrorMessages.ANY_USER_NOT_FOUND);
+            e.setErrorMessage(AppMessages.ANY_USER_NOT_FOUND);
             responseEntity = responseEx(e);
         }
         return responseEntity;
@@ -83,6 +86,7 @@ public class UserController extends ValidationController{
         ResponseEntity<Object> responseEntity;
         try {
             UserMaster userMaster =FactoryPatten.userRequest(userMasterReqPojo);
+            userMaster.setPassword(userServiceImpl.selectById(id).getPassword());
             responseEntity = responseBuilder(userServiceImpl.updateMaster(userMaster, id));
 
         } catch (CustomMessage e) {
@@ -92,6 +96,23 @@ public class UserController extends ValidationController{
         return responseEntity;
     }
 
+    @PutMapping("/changePassword/{userId}")
+    public ResponseEntity<Object> changePassword(@PathVariable("userId") long id, @RequestBody ChangePassword changePassword){
+        ResponseEntity<Object> responseEntity= null;
+        try{
+            UserMaster userMaster = userServiceImpl.selectById(id);
+            if(userMaster.getPassword().equals(changePassword.getOldPassword())){
+                passwordValidator(changePassword.getNewPassword());
+                userMaster.setPassword(changePassword.getNewPassword());
+                userServiceImpl.updateMaster(userMaster,id);
+                responseEntity = responseMessage(AppMessages.PASSWORD_UPDATED);
+            }
+        }catch (CustomMessage e){
+            e.setErrorMessage(AppMessages.WRONG_PASSWORD);
+            responseEntity = responseEx(e);
+        }
+        return responseEntity;
+    }
 
     /**
      * soft delete mean only set user in active
@@ -109,7 +130,7 @@ public class UserController extends ValidationController{
             userMaster.getUserDetail().setStatus(false);
             userServiceImpl.updateMaster(userMaster, id);
 
-            responseEntity = responseMessage("User ID : '" + id + "' successfully soft delete");
+            responseEntity = responseMessage("user ID : '" + id + "' successfully soft delete");
         } catch (CustomMessage e) {
             responseEntity = responseEx(e);
         }
@@ -128,7 +149,7 @@ public class UserController extends ValidationController{
         try {
             userMaster = userServiceImpl.selectById(id);
             userServiceImpl.delete(userMaster);
-            responseEntity = responseMessage("User ID : '" + id + "' successfully hard delete");
+            responseEntity = responseMessage("user ID : '" + id + "' successfully hard delete");
         } catch (CustomMessage e) {
             responseEntity = responseEx(e);
         }

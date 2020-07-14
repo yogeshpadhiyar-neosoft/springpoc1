@@ -12,6 +12,7 @@ import java.sql.Date;
 public class UserContractsPojo {
     private String projectName;
     private String projectDetails;
+    private String companyName;
     private Date startDate;
     private Date endDate;
     private boolean activeProject;

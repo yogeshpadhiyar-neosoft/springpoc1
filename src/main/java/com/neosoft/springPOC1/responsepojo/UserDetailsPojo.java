@@ -11,10 +11,10 @@ import java.sql.Date;
 @ToString
 public class UserDetailsPojo {
     private String name;
-    private String sunName;
+    private String surName;
     private String emailId;
     private String mobileNo;
-    private Date dataOfBirth;
+    private Date dateOfBirth;
     private Date joinDate;
     private int pinCode;
 }

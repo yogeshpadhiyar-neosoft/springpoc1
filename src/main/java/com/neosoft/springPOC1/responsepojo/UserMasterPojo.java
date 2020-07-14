@@ -10,9 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class UserMasterPojo {
-    /*private long userId;*/
+    private long userId;
     private String userName;
-
 
     private UserDetailsPojo userDetailsPojo;
     private UserEducationPojo userEducationPojo;
