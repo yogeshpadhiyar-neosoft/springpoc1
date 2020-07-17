@@ -8,5 +8,5 @@ public class AppMessages {
     public static final String WRONG_QUERY="Input Query is wrong. Any user not found";
     public static final String WRONG_PASSWORD="Please enter correct old password.";
     public static final String PASSWORD_UPDATED="Password update Successfully.";
-
+    public static final String VALID_USERNAME_PASSWORD = "Please Enter Valid EmailId and Password";
 }

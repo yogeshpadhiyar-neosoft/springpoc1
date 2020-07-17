@@ -17,9 +17,9 @@ public class CustomMessage extends RuntimeException {
     private String errorMessage;
     private List<String> errors;
 
-    public CustomMessage(HttpStatus httpStatus ,  String errorMessage){
+    public CustomMessage(HttpStatus httpStatus ,  List<String> errors){
         this.httpStatus = httpStatus;
-        this.errorMessage = errorMessage;
+        this.errors = errors;
     }
 
 }

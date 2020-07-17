@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -23,7 +24,7 @@ public class DynamicSearchCustomImpl implements DynamicSearchService {
     @Override
     public List<UserMaster> dynamicSearch(String query) throws CustomMessage{
         if(query==null)
-            throw new CustomMessage(HttpStatus.BAD_REQUEST, AppMessages.WRONG_QUERY);
+            throw new CustomMessage(HttpStatus.BAD_REQUEST, Arrays.asList(AppMessages.WRONG_QUERY));
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<UserMaster> criteriaQuery = criteriaBuilder.createQuery(UserMaster.class);
         Root<UserMaster> userMaster = criteriaQuery.from(UserMaster.class);
@@ -31,7 +32,7 @@ public class DynamicSearchCustomImpl implements DynamicSearchService {
         TypedQuery<UserMaster> queryResult = entityManager.createQuery(query,UserMaster.class);
 
         if(queryResult.getResultList().isEmpty())
-            throw new CustomMessage(HttpStatus.BAD_REQUEST, AppMessages.WRONG_QUERY);
+            throw new CustomMessage(HttpStatus.BAD_REQUEST, Arrays.asList(AppMessages.WRONG_QUERY));
         else
             return queryResult.getResultList();
     }

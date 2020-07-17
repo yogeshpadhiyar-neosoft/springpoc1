@@ -6,31 +6,61 @@ import com.neosoft.springPOC1.exception.CustomMessage;
 import com.neosoft.springPOC1.factorymethod.FactoryPatten;
 import com.neosoft.springPOC1.model.UserMaster;
 import com.neosoft.springPOC1.requestpojo.ChangePassword;
+import com.neosoft.springPOC1.requestpojo.Login;
 import com.neosoft.springPOC1.requestpojo.UserMasterReqPojo;
 import com.neosoft.springPOC1.service.DynamicSearchCustomImpl;
 import com.neosoft.springPOC1.service.UserDetailService;
 import com.neosoft.springPOC1.service.UserServiceImpl;
+import com.neosoft.springPOC1.util.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/poc1/userDetail")
-@CrossOrigin(origins = "*" , allowedHeaders = "*")
-public class UserController extends ValidationController{
+public class UserController extends ValidationController {
 
     private final UserServiceImpl userServiceImpl;
     private final DynamicSearchCustomImpl dynamicSearch;
-
+    private final AuthenticationManager authenticationManager;
+    private final JwtToken jwtToken;
 
     @Autowired
-    public UserController(UserServiceImpl userServiceImpl, DynamicSearchCustomImpl dynamicSearch,
-                          UserDetailService userDetailService) {
+    public UserController(UserDetailService userDetailService, UserServiceImpl userServiceImpl, JwtToken jwtToken,
+                          DynamicSearchCustomImpl dynamicSearch, AuthenticationManager authenticationManager) {
         super(userDetailService);
         this.userServiceImpl = userServiceImpl;
         this.dynamicSearch = dynamicSearch;
+        this.authenticationManager = authenticationManager;
+        this.jwtToken = jwtToken;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody Login login) {
+        System.out.println("Controller");
+        ResponseEntity<Object> responseEntity;
+        try {
+            System.out.println("Controller1");
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword())
+            );
+            System.out.println("2222");
+            UserDetails userDetails = userServiceImpl.loadUserByUsername(login.getUsername());
+            String jwtTokenString = jwtToken.generateToken(userDetails);
+            responseEntity = responseMessage(jwtTokenString);
+        } catch (BadCredentialsException e) {
+            CustomMessage customMessage = new CustomMessage();
+            customMessage.setErrors(Arrays.asList(AppMessages.VALID_USERNAME_PASSWORD , e.getMessage()));
+            responseEntity = responseEx(customMessage);
+        }
+        return responseEntity;
     }
 
     /**
@@ -46,7 +76,7 @@ public class UserController extends ValidationController{
         try {
             responseEntity = responseBuilder(userServiceImpl.selectAll());
         } catch (CustomMessage e) {
-            e.setErrorMessage(AppMessages.ANY_USER_NOT_FOUND);
+            e.setErrors(Arrays.asList(AppMessages.ANY_USER_NOT_FOUND));
             responseEntity = responseEx(e);
         }
         return responseEntity;
@@ -82,10 +112,10 @@ public class UserController extends ValidationController{
      * @return updated data
      */
     @PutMapping("/{userId}")
-    public ResponseEntity<Object> updateUser(@PathVariable("userId") long id,  @RequestBody UserMasterReqPojo userMasterReqPojo) {
+    public ResponseEntity<Object> updateUser(@PathVariable("userId") long id, @RequestBody UserMasterReqPojo userMasterReqPojo) {
         ResponseEntity<Object> responseEntity;
         try {
-            UserMaster userMaster =FactoryPatten.userRequest(userMasterReqPojo);
+            UserMaster userMaster = FactoryPatten.userRequest(userMasterReqPojo);
             userMaster.setPassword(userServiceImpl.selectById(id).getPassword());
             responseEntity = responseBuilder(userServiceImpl.updateMaster(userMaster, id));
 
@@ -97,18 +127,18 @@ public class UserController extends ValidationController{
     }
 
     @PutMapping("/changePassword/{userId}")
-    public ResponseEntity<Object> changePassword(@PathVariable("userId") long id, @RequestBody ChangePassword changePassword){
-        ResponseEntity<Object> responseEntity= null;
-        try{
+    public ResponseEntity<Object> changePassword(@PathVariable("userId") long id, @RequestBody ChangePassword changePassword) {
+        ResponseEntity<Object> responseEntity = null;
+        try {
             UserMaster userMaster = userServiceImpl.selectById(id);
-            if(userMaster.getPassword().equals(changePassword.getOldPassword())){
+            if (userMaster.getPassword().equals(changePassword.getOldPassword())) {
                 passwordValidator(changePassword.getNewPassword());
                 userMaster.setPassword(changePassword.getNewPassword());
-                userServiceImpl.updateMaster(userMaster,id);
+                userServiceImpl.updateMaster(userMaster, id);
                 responseEntity = responseMessage(AppMessages.PASSWORD_UPDATED);
             }
-        }catch (CustomMessage e){
-            e.setErrorMessage(AppMessages.WRONG_PASSWORD);
+        } catch (CustomMessage e) {
+            e.setErrors(Arrays.asList(AppMessages.WRONG_PASSWORD));
             responseEntity = responseEx(e);
         }
         return responseEntity;
@@ -166,12 +196,12 @@ public class UserController extends ValidationController{
      * @return searched user list
      */
     @GetMapping("/{query}")
-    public ResponseEntity<Object> dynamicSearch (@PathVariable("query") String query){
+    public ResponseEntity<Object> dynamicSearch(@PathVariable("query") String query) {
         ResponseEntity<Object> responseEntity;
         try {
             query = FactoryPatten.selectQueryConstructor(query);
             responseEntity = responseBuilder(dynamicSearch.dynamicSearch(query));
-        }catch (CustomMessage e){
+        } catch (CustomMessage e) {
             responseEntity = responseEx(e);
         }
         return responseEntity;
@@ -186,11 +216,11 @@ public class UserController extends ValidationController{
      * @return
      */
     @GetMapping("/sortBy{field}")
-    public ResponseEntity<Object> sortBy (@PathVariable("field") String field){
+    public ResponseEntity<Object> sortBy(@PathVariable("field") String field) {
         ResponseEntity<Object> responseEntity;
-        try{
+        try {
             responseEntity = responseBuilder(userServiceImpl.dynamicSort(field));
-        }catch (CustomMessage e){
+        } catch (CustomMessage e) {
             responseEntity = responseEx(e);
         }
         return responseEntity;

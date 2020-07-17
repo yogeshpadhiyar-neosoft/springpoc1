@@ -6,6 +6,7 @@ import com.neosoft.springPOC1.exception.CustomMessage;
 import com.neosoft.springPOC1.factorymethod.FactoryPatten;
 import com.neosoft.springPOC1.model.UserMaster;
 import com.neosoft.springPOC1.requestpojo.UserMasterReqPojo;
+import com.neosoft.springPOC1.responsepojo.ResponseMsg;
 import com.neosoft.springPOC1.responsepojo.UserMasterPojo;
 import com.neosoft.springPOC1.service.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,7 +152,7 @@ public abstract class ValidationController {
      */
     protected ResponseEntity<Object> responseBuilder(UserMaster userMaster ) throws CustomMessage{
         UserMasterPojo userMasterPojo = FactoryPatten.userResponse(userMaster);
-        return new ResponseEntity<>(userMasterPojo , HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userMasterPojo , HttpStatus.OK);
     }
 
 
@@ -166,7 +167,7 @@ public abstract class ValidationController {
         userMasterList.forEach(userMaster -> {
             userMasterPojoList.add(FactoryPatten.userResponse(userMaster));
         });
-        return new ResponseEntity<>(userMasterPojoList , HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userMasterPojoList , HttpStatus.OK);
     }
 
 
@@ -176,7 +177,7 @@ public abstract class ValidationController {
      * @return
      */
     protected ResponseEntity<Object> responseMessage(String message) {
-        return new ResponseEntity<>(message, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(new ResponseMsg(message), HttpStatus.OK);
     }
 
 
@@ -186,6 +187,8 @@ public abstract class ValidationController {
      * @return
      */
     protected ResponseEntity<Object> responseEx(CustomMessage ex) {
-        return new ResponseEntity<>(new Gson().toJson(ex), HttpStatus.BAD_REQUEST);
+        String errors = ex.getErrors().toString();
+        System.out.println(errors);
+        return new ResponseEntity<>(new ResponseMsg(errors), HttpStatus.BAD_REQUEST);
     }
 }

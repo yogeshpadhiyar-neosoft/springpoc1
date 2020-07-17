@@ -1,12 +1,13 @@
 package com.neosoft.springPOC1.service;
 
 import com.neosoft.springPOC1.model.UserMaster;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     /**
      * Use of find all data of user using userID
